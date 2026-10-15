@@ -71,7 +71,7 @@ The physical infrastructure consists of three Proxmox nodes with a combined 48 G
 
 | Node | Hardware | CPU | RAM |
 |---|---|---|---|
-| `pve-master` | HP EliteDesk 600 G2 SFF | Intel Core i5-6500 | 16 GB |
+| `proxmox    ` | HP EliteDesk 600 G2 SFF | Intel Core i5-6500 | 16 GB |
 | `pve-worker1` | HP ProDesk 400 G3 Mini | Intel Core i5-7500T | 16 GB |
 | `pve-worker2` | HP ProDesk 400 G3 Mini | Intel Core i5-7500T | 16 GB |
 
