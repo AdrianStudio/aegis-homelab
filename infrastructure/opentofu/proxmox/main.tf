@@ -24,6 +24,14 @@ resource "proxmox_virtual_environment_vm" "test_vm" {
     vm_id = data.proxmox_vm.ubuntu_template90.id
   }
   initialization {
-
+    ip_config {
+      ipv4 {
+        address = "192.168.1.209/24"
+        gateway = "192.168.1.1"
+      }
+    }
+    dns {
+      servers = ["192.168.1.200"]
+    }
   }
 }
