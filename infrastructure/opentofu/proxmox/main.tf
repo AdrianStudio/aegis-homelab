@@ -33,5 +33,12 @@ resource "proxmox_virtual_environment_vm" "test_vm" {
     dns {
       servers = ["192.168.1.200"]
     }
+    user_account {
+      username = "adrian"
+      keys     = [trimspace(file("~/.ssh/id_ed25519.pub"))]
+    }
+  }
+  agent {
+    enabled = false
   }
 }
