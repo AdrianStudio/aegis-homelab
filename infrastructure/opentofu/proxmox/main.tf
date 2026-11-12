@@ -3,30 +3,31 @@ data "proxmox_vm" "ubuntu_template90" {
   id        = 9000
 }
 
-resource "proxmox_virtual_environment_vm" "test_vm" {
-  name      = "tofu-test"
-  node_name = "proxmox"
-  vm_id     = 100
+resource "proxmox_virtual_environment_vm" "k3s" {
+  for_each  = var.k3s_nodes
+  name      = each.key
+  node_name = each.value.node_name
+  vm_id     = each.value.vm_id
   cpu {
     type  = "qemu64"
-    cores = 2
+    cores = each.value.cores
   }
   disk {
-    datastore_id = "local-nvme"
+    datastore_id = each.value.datastore
     interface    = "scsi0"
-    size         = 20
+    size         = 50
   }
   memory {
-    dedicated = 4096
+    dedicated = each.value.memory
   }
   scsi_hardware = "virtio-scsi-single"
   clone {
-    vm_id = data.proxmox_vm.ubuntu_template90.id
+    vm_id = each.value.template_id
   }
   initialization {
     ip_config {
       ipv4 {
-        address = "192.168.1.209/24"
+        address = each.value.ip
         gateway = var.gateway
       }
     }
