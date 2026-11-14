@@ -1,7 +1,5 @@
 - hosts: k3s-01
   become: true
-  vars:
-    k3s_version: v1.37.2+k3s1
   tasks:
     - name: Download the k3s instal script
       ansible.builtin.get_url:
@@ -15,3 +13,26 @@
         creates: /usr/local/bin/k3s
       environment:
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
+
+    - name: Read the cluster join token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/token
+      register: k3s_token
+      no_log: true
+
+- hosts: k3s-02, k3s-03
+  become: true
+  serial: 1
+  tasks:
+    - name: Download the k3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /usr/local/bin/k3s-install.sh
+        mode: "0755"
+    - name: Join the cluster as a server
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s-install.sh server --server https://192.168.1.31:6443
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        K3S_TOKEN: "{{ hostvars['k3s-01'].k3s_token.content | b64decode | trim }}"
