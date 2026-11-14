@@ -52,8 +52,8 @@ resource "proxmox_virtual_environment_vm" "k3s" {
     }
   }
 
-  # Off until Ansible installs the agent in the VM.
+  #Lets Proxmox see the VM's IP and shut it down cleanly; needs qemu-guest-agent (installed by Ansible).
   agent {
-    enabled = false
+    enabled = true
   }
 }
