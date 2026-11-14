@@ -1,0 +1,7 @@
+- hosts: k3s
+  become: true
+  tasks:
+    - name: Performs an update and full upgrade on target machine.
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
