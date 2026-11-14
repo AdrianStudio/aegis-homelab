@@ -50,17 +50,17 @@ After rebuilding a VM, clear its old SSH host key: `ssh-keygen -R 192.168.1.31`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | DNS server/s for the VMs (pihole, google, etc) | `list(string)` | <pre>[<br/>  "192.168.1.200"<br/>]</pre> | no |
-| <a name="input_gateway"></a> [gateway](#input\_gateway) | Gateway for the VMs | `string` | `"192.168.1.1"` | no |
-| <a name="input_k3s_nodes"></a> [k3s\_nodes](#input\_k3s\_nodes) | K3s VMs: one entry per VM, keyed by VM name | `map(object)` | see `variables.tf` | no |
-| <a name="input_proxmox_api_token"></a> [proxmox\_api\_token](#input\_proxmox\_api\_token) | Proxmox API token | `string` | n/a | yes |
-| <a name="input_sshkey_path"></a> [sshkey\_path](#input\_sshkey\_path) | SSH key to add to VMs | `string` | `"~/.ssh/id_ed25519.pub"` | no |
-| <a name="input_vm_username"></a> [vm\_username](#input\_vm\_username) | Username for the vms | `string` | `"adrian"` | no |
+| <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | DNS servers for the VMs (Pi-hole) | `list(string)` | <pre>[<br/>  "192.168.1.200"<br/>]</pre> | no |
+| <a name="input_gateway"></a> [gateway](#input\_gateway) | Default gateway for the VMs | `string` | `"192.168.1.1"` | no |
+| <a name="input_k3s_nodes"></a> [k3s\_nodes](#input\_k3s\_nodes) | K3s VMs, keyed by VM name | `map(object)` | see `variables.tf` | no |
+| <a name="input_proxmox_api_token"></a> [proxmox\_api\_token](#input\_proxmox\_api\_token) | Proxmox API token: 'opentofu@pve!opentofu=<secret>'. Set via TF\_VAR\_proxmox\_api\_token. | `string` | n/a | yes |
+| <a name="input_sshkey_path"></a> [sshkey\_path](#input\_sshkey\_path) | Path to the public SSH key installed in each VM | `string` | `"~/.ssh/id_ed25519.pub"` | no |
+| <a name="input_vm_username"></a> [vm\_username](#input\_vm\_username) | Linux user created in each VM by Cloud-Init | `string` | `"adrian"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_is_template"></a> [is\_template](#output\_is\_template) | Whether the VM is a Proxmox template (master copy for cloning). |
-| <a name="output_template_name"></a> [template\_name](#output\_template\_name) | Name of the template VM read from Proxmox. |
+| <a name="output_is_template"></a> [is\_template](#output\_is\_template) | True if VM 9000 is a template |
+| <a name="output_template_name"></a> [template\_name](#output\_template\_name) | Name of template 9000 |
 <!-- END_TF_DOCS -->

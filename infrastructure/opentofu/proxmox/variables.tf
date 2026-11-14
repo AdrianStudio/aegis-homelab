@@ -1,43 +1,49 @@
+# Inputs. The description of each one is the documentation (shown in README).
+
 variable "proxmox_api_token" {
-  description = "Proxmox API token"
+  description = "Proxmox API token: 'opentofu@pve!opentofu=<secret>'. Set via TF_VAR_proxmox_api_token."
   type        = string
-  sensitive   = true
+  sensitive   = true # hidden in plan output
 }
 
+# Shared by all VMs.
+
 variable "vm_username" {
+  description = "Linux user created in each VM by Cloud-Init"
   type        = string
   default     = "adrian"
-  description = "Username for the vms"
 }
 
 variable "dns_servers" {
+  description = "DNS servers for the VMs (Pi-hole)"
   type        = list(string)
   default     = ["192.168.1.200"]
-  description = "DNS server/s for the VMs (pihole, google, etc)"
 }
 
 variable "gateway" {
+  description = "Default gateway for the VMs"
   type        = string
   default     = "192.168.1.1"
-  description = "Gateway for the VMs"
 }
 
 variable "sshkey_path" {
+  description = "Path to the public SSH key installed in each VM"
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
-  description = "SSH key to add to VMs"
 }
 
+# Per VM: one entry = one VM. Add a row to add a VM.
+
 variable "k3s_nodes" {
-  description = "K3s VMs: one entry per VM, keyed by VM name"
+  description = "K3s VMs, keyed by VM name"
   type = map(object({
-    node_name   = string
+    node_name   = string # Proxmox node to run on
     vm_id       = number
-    ip          = string
+    ip          = string # CIDR, e.g. 192.168.1.31/24
     cores       = number
-    memory      = number
-    datastore   = string
-    template_id = number
+    memory      = number # MiB
+    datastore   = string # must exist on node_name
+    template_id = number # template on the same node
   }))
   default = {
     "k3s-01" = { node_name = "proxmox", vm_id = 301, ip = "192.168.1.31/24", cores = 4, memory = 6144, datastore = "local-nvme", template_id = 9000 }
