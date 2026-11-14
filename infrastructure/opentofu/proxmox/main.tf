@@ -47,7 +47,7 @@ resource "proxmox_virtual_environment_vm" "k3s" {
 
     # Linux user inside the VM (not opentofu@pve).
     user_account {
-      username = "adrian"
+      username = var.vm_username
       keys     = [trimspace(file(var.sshkey_path))] # trimspace stops a never-ending diff
     }
   }

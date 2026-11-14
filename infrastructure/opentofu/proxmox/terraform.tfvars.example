@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars (gitignored) to override the defaults in variables.tf.
+# Never put the API token here; use: export TF_VAR_proxmox_api_token='opentofu@pve!opentofu=...'
+
+# vm_username = "adrian"
+# gateway     = "192.168.1.1"
+# dns_servers = ["192.168.1.200"]
+# sshkey_path = "~/.ssh/id_ed25519.pub"
+
+# k3s_nodes = {
+#   "k3s-01" = { node_name = "proxmox", vm_id = 301, ip = "192.168.1.31/24", cores = 4, memory = 6144, datastore = "local-nvme", template_id = 9000 }
+# }
