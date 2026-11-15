@@ -1,0 +1,3 @@
+# Where this VM lives (keep in sync with k3s_nodes in OpenTofu variables.tf)
+proxmox_node: proxmox
+vm_id: 301
