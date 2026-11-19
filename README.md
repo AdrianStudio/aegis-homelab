@@ -7,7 +7,7 @@
 ![Ubuntu](https://img.shields.io/badge/OS-Ubuntu%20Server%2024.04-E95420?logo=ubuntu&logoColor=white)
 ![GitHub](https://img.shields.io/badge/Version%20Control-GitHub-181717?logo=github)
 
-# AEGIS — Homelab Infrastructure & SRE Platform
+# AEGIS: Homelab Infrastructure & SRE Platform
 
 A self-hosted infrastructure platform built to explore infrastructure as code, configuration management, Kubernetes, observability, and Site Reliability Engineering.
 
@@ -31,7 +31,7 @@ This is not just a collection of services running in a homelab. It is an enginee
 
 ## Architecture
 
-The platform is designed around three physical Proxmox nodes. Each Kubernetes server will run in its own virtual machine, keeping the Kubernetes control plane distributed across the physical hosts.
+The platform is designed around three physical Proxmox nodes. Each Kubernetes server runs in its own virtual machine, keeping the Kubernetes control plane distributed across the physical hosts.
 
 ```text
                          DEVELOPER
@@ -61,7 +61,7 @@ The platform is designed around three physical Proxmox nodes. Each Kubernetes se
                    Python + Telegram
 ```
 
-The diagram represents the target architecture. Kubernetes, GitOps, observability, and SRE automation will be marked operational only after deployment and validation.
+The diagram represents the target architecture. The Proxmox layer and the K3s HA control plane are operational; GitOps, observability, and SRE automation will be marked operational only after deployment and validation.
 
 ---
 
@@ -77,9 +77,9 @@ The physical infrastructure consists of three Proxmox nodes with a combined 48 G
 
 ### Storage strategy
 
-- Local SSD/NVMe storage will host the Kubernetes virtual machines.
+- Local SSD/NVMe storage hosts the Kubernetes virtual machines.
 - The NAS will be reserved for suitable storage and backup workloads.
-- Kubernetes etcd will use local VM disks rather than depend on NAS storage.
+- Kubernetes etcd uses local VM disks rather than depending on NAS storage.
 - Backup and recovery procedures will be documented and tested as the platform evolves.
 
 ---
@@ -89,11 +89,11 @@ The physical infrastructure consists of three Proxmox nodes with a combined 48 G
 | Layer | Technology | Purpose | Status |
 |---|---|---|---|
 | Virtualization | Proxmox VE | VM provisioning and host management | Operational |
-| Infrastructure as Code | OpenTofu | Declarative infrastructure provisioning | Installed |
-| Configuration Management | Ansible | OS configuration and automation | Installed |
-| Operating System | Ubuntu Server 24.04 LTS | Kubernetes VM operating system | Planned |
-| Container Orchestration | K3s | Lightweight Kubernetes distribution | Planned |
-| Cluster Datastore | Embedded etcd | Kubernetes state and consensus | Planned |
+| Infrastructure as Code | OpenTofu | Declarative infrastructure provisioning | Operational |
+| Configuration Management | Ansible | OS configuration and automation | Operational |
+| Operating System | Ubuntu Server 24.04 LTS | Kubernetes VM operating system | Operational |
+| Container Orchestration | K3s | Lightweight Kubernetes distribution | Operational |
+| Cluster Datastore | Embedded etcd | Kubernetes state and consensus | Operational |
 | Version Control | Git + GitHub | Source control and documentation | Operational |
 | CI/CD | GitLab CI/CD | Automated validation and workflows | Planned |
 | GitOps | Argo CD | Declarative workload delivery | Planned |
@@ -110,15 +110,15 @@ OpenTofu and Ansible have separate responsibilities.
 
 ### OpenTofu
 
-OpenTofu will define and provision the virtual machines on Proxmox, including their compute resources, storage, networking, and lifecycle.
+OpenTofu defines and provisions the virtual machines on Proxmox, including their compute resources, storage, networking, and lifecycle. Each node clones its own cloud-init template (see [ADR 0001](docs/decisions/0001-k3s-vm-layout.md)).
 
-Infrastructure changes will be reviewed through plans before they are applied.
+Infrastructure changes are reviewed through plans before they are applied.
 
 ### Ansible
 
-Ansible will configure the operating system and prepare each VM for Kubernetes.
+Ansible configures the operating system, prepares each VM for Kubernetes and installs K3s.
 
-Responsibilities will include:
+Responsibilities include:
 
 - System packages and updates.
 - Hostnames and network configuration.
@@ -132,15 +132,15 @@ The objective is to make infrastructure reproducible rather than dependent on un
 
 ## Kubernetes Design
 
-The target platform uses three K3s server nodes with embedded etcd.
+The platform runs three K3s server nodes (`v1.37.2+k3s1`) with embedded etcd: `k3s-01` initialises the cluster and `k3s-02` and `k3s-03` join it as servers.
 
-| Node | Planned IP | Physical Host |
-|---|---|---|
-| `k3s-01` | `192.168.1.201` | `pve-master` |
-| `k3s-02` | `192.168.1.202` | `pve-worker1` |
-| `k3s-03` | `192.168.1.203` | `pve-worker2` |
+| Node | VM ID | IP | Physical Host |
+|---|---|---|---|
+| `k3s-01` | 301 | `192.168.1.31` | `proxmox` |
+| `k3s-02` | 302 | `192.168.1.32` | `pve-worker1` |
+| `k3s-03` | 303 | `192.168.1.33` | `pve-worker2` |
 
-Planned network configuration:
+Network configuration:
 
 | Setting | Value |
 |---|---|
@@ -150,7 +150,7 @@ Planned network configuration:
 | Pod CIDR | `10.42.0.0/16` |
 | Service CIDR | `10.43.0.0/16` |
 
-These are the current planned addresses and network ranges. VM resource allocations and connectivity will be validated before deployment.
+The originally planned addresses clashed with existing LAN devices; the reasoning behind the final layout is in [ADR 0001](docs/decisions/0001-k3s-vm-layout.md).
 
 ### Why three server nodes?
 
@@ -215,10 +215,10 @@ OpenTofu state files, generated plans, variable files containing sensitive value
 - [x] Prepare the DevBox and install OpenTofu and Ansible.
 - [x] Create the initial Git repository and publish it on GitHub.
 - [x] Establish the initial repository structure and `.gitignore`.
-- [ ] Finalise VM resource allocations.
-- [ ] Provision three Kubernetes VMs with OpenTofu.
-- [ ] Configure Ubuntu and Kubernetes prerequisites with Ansible.
-- [ ] Deploy K3s and validate embedded etcd health.
+- [x] Finalise VM resource allocations.
+- [x] Provision three Kubernetes VMs with OpenTofu.
+- [x] Configure Ubuntu and Kubernetes prerequisites with Ansible.
+- [x] Deploy K3s and validate embedded etcd health.
 - [ ] Implement and test backup and recovery procedures.
 - [ ] Deploy monitoring and alerting.
 - [ ] Introduce GitOps with Argo CD.
@@ -245,8 +245,8 @@ OpenTofu state files, generated plans, variable files containing sensitive value
 
 AEGIS is under active development.
 
-The three-node Proxmox environment is operational, and the DevBox has OpenTofu and Ansible installed. The GitHub repository and initial project structure are in place.
+The three-node Proxmox environment is operational. OpenTofu provisions the three Kubernetes VMs and Ansible configures them and runs a three-server K3s cluster with embedded etcd, with the kubeconfig fetched to the DevBox.
 
-The Kubernetes cluster, monitoring stack, GitOps workflows, secrets management, and SRE agent remain planned work.
+Backups and recovery, the monitoring stack, GitOps workflows, secrets management, and the SRE agent are the next steps.
 
 This README will evolve alongside the implementation, with architecture decisions, deployment evidence, validation results, and operational lessons documented as the platform grows.
