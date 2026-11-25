@@ -6,6 +6,12 @@ variable "proxmox_api_token" {
   sensitive   = true # hidden in plan output
 }
 
+variable "state_passphrase" {
+  description = "Passphrase for OpenTofu state encryption. Set via TF_VAR_state_passphrase."
+  type        = string
+  sensitive   = true # hidden in plan output
+}
+
 # Shared by all VMs.
 
 variable "vm_username" {
