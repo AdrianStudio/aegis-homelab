@@ -28,3 +28,9 @@ crash.*.log
 .vscode/
 .idea/
 .DS_Store
+
+# Cluster credentials (Talos / Kubernetes)
+talosconfig
+kubeconfig
+*.kubeconfig
+_out/
