@@ -1,11 +1,18 @@
-# Values printed after plan/apply. Quick check that Proxmox and template 9000 are reachable.
+# Values available after apply. Credentials are sensitive: read them with `tofu output -raw <name>`.
 
-output "template_name" {
-  description = "Name of template 9000"
-  value       = data.proxmox_vm.ubuntu_template90.name
+output "talosconfig" {
+  description = "talosctl client configuration (write it to ~/.talos/config)"
+  value       = data.talos_client_configuration.this.talos_config
+  sensitive   = true
 }
 
-output "is_template" {
-  description = "True if VM 9000 is a template"
-  value       = data.proxmox_vm.ubuntu_template90.template
+output "kubeconfig" {
+  description = "Admin kubeconfig through the API VIP (write it to ~/.kube/config)"
+  value       = talos_cluster_kubeconfig.this.kubeconfig_raw
+  sensitive   = true
+}
+
+output "node_ips" {
+  description = "Talos node IPs by hostname"
+  value       = { for k, n in var.talos_nodes : k => n.ip }
 }

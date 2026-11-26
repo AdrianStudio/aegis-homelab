@@ -7,5 +7,9 @@ terraform {
       source  = "bpg/proxmox"
       version = "~> 0.86" # any 0.x from 0.86 up, never 1.0
     }
+    talos = {
+      source  = "siderolabs/talos"
+      version = "~> 0.12.0" # 0.12.x only; 0.13 is still alpha
+    }
   }
 }
