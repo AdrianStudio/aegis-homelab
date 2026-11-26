@@ -1,6 +1,0 @@
-k3s_version: v1.37.2+k3s1
-
-# Login banner (motd.yml). Same style as the Proxmox hosts' banners.
-motd_title: "K3S SERVER NODE {{ inventory_hostname[-1] }}"
-motd_role: "Servidor K3s (control plane + etcd)"
-motd_color: "1;32" # ANSI colour of the box border: bold green
