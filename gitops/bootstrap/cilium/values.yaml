@@ -1,0 +1,36 @@
+# Cilium for the LORIANX Talos cluster. Installed with Helm from the DevBox, outside Argo CD.
+# Talos-specific settings follow the official guide: kubernetes-guides/cni/deploying-cilium
+
+ipam:
+  mode: kubernetes # pod CIDRs are assigned by Kubernetes (Talos requirement)
+
+# Replaces kube-proxy (disabled in the Talos config) with eBPF.
+kubeProxyReplacement: true
+k8sServiceHost: localhost # KubePrism: node-local, highly available API endpoint
+k8sServicePort: 7445
+
+# Talos does not allow loading kernel modules: default capabilities without SYS_MODULE.
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+
+# Talos already mounts cgroup v2; Cilium must not mount it again.
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
