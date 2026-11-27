@@ -34,3 +34,13 @@ cgroup:
   autoMount:
     enabled: false
   hostRoot: /sys/fs/cgroup
+
+
+# LoadBalancer IPs on the LAN: one node answers ARP for each IP (L2 announcements).
+l2announcements:
+  enabled: true
+
+# L2 announcements use Kubernetes leases: raise the API client rate limit (Cilium docs recommendation).
+k8sClientRateLimit:
+  qps: 10
+  burst: 20
